@@ -27,39 +27,97 @@
             width: 60%;
             padding: 25px;
         }
-        
+        table td{
+            position: relative;
+            overflow: hidden;
+        }
+        table td:hover .title{
+            display: block;
+        }
+        .title{
+            position: absolute;
+            bottom: 29px;
+            left: 0px;
+            padding: 5px 10px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.48);
+            color: white;
+            display: none;
+            font-size: 12px;
+
+        }
       
         </style>
+          <script src="https://cdn.jsdelivr.net/npm/reddit.js@0.1.4/reddit.min.js"></script>
+          
     </head>
     <body>
         <table align="center">
             <tr>
-                <input class="text" type="text"> 
+                <input id="search" class="text" type="text" placeholder="Type subreddit"/> 
             </tr>
           
             <tr> 
-                <td><a href="https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg"><img src="https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg"></a></td>
-                <td><a href="https://static.pexels.com/photos/34950/pexels-photo.jpg"><img src="https://static.pexels.com/photos/34950/pexels-photo.jpg"></a></td>
-                <td><a href="https://static.pexels.com/photos/145939/pexels-photo-145939.jpeg"><img src="https://static.pexels.com/photos/145939/pexels-photo-145939.jpeg"></a></td>
+                <td><img id="img01"><div id="txt01" class="title"></div></td>
+                <td><img id="img02"><div id="txt02" class="title"></div></td>
+                <td><img id="img03"><div id="txt03" class="title"></div></td>
                 
             </tr>  
 
             <tr> 
-                <td><img src="https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg"></td>
-                <td><img src="https://static.pexels.com/photos/34950/pexels-photo.jpg"></td>
-                <td><img src="https://static.pexels.com/photos/145939/pexels-photo-145939.jpeg"></td>
+                <td><img id="img04"><div id="txt04" class="title"></div></td>
+                <td><img id="img05"><div id="txt05" class="title"></div></td>
+                <td><img id="img06"><div id="txt06" class="title"></div></td>
             
             </tr>
 
             <tr> 
-                <td><img src="https://static.pexels.com/photos/33109/fall-autumn-red-season.jpg"></td>
-                <td><img src="https://static.pexels.com/photos/34950/pexels-photo.jpg"></td>
-                <td><img src="https://static.pexels.com/photos/145939/pexels-photo-145939.jpeg"></td>
+                <td><img id="img07"><div id="txt07" class="title"></div></td>
+                <td><img id="img08"><div id="txt08" class="title"></div></td>
+                <td><img id="img09"><div id="txt09" class="title"></div></td>
             
             </tr>
 
 
         </table>
+        <script>
+        var reddits=[]; 
+        document.getElementById("search").addEventListener("keyup",handleText,false);
+        function handleText(s){
+            if(s.keyCode!=13){
+                return
+            }
+            fetch("http://www.reddit.com/r/"+s.currentTarget.value+".json?limit=100").then(function(res){
+                return res.json()
+
+            }).then(function(subreddits){
+          
+                reddits=subreddits.data.children.slice(Math.floor(Math.random() * 90),subreddits.data.children.length);
+                
+                var len=reddits.length-1;
+                for(var i=0; i<=len;i++){
+                    var item=reddits[i];
+                    
+                    if(item.data.thumbnail){
+                        var el=document.getElementById("img0"+(i+1).toString());
+                        var txtTitle = document.getElementById("txt0"+(i+1).toString());
+
+                        txtTitle.innerText=item.data.title;
+                        el.dataset.id=i;
+                        el.src=item.data.thumbnail
+                        el.onclick=function(e){
+                            var id=e.currentTarget.dataset.id
+                           
+                            window.open(reddits[id].data.url,"_blank")
+
+                        }
+                    }
+                }
+            })
+        
+        }
+        
+        </script>
     </body>
 
 </html>
